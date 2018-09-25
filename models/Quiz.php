@@ -119,8 +119,7 @@
                               quiz_title = :quizTitle,
                               admin_id = :admin_id,
                               description = :description,
-                              filepath = :filepath,
-                              part_type = :part_type";
+                              filepath = :filepath";
 
             $stmt = $this->conn->prepare($insertQuery);
 
@@ -128,7 +127,7 @@
             $this->description = htmlspecialchars(strip_tags($this->description));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
             $this->filepath = htmlspecialchars(strip_tags($this->filepath));
-            $this->part_type = htmlspecialchars(strip_tags($this->part_type));
+            //$this->part_type = htmlspecialchars(strip_tags($this->part_type));
 
             // Bind parameters
 
@@ -139,7 +138,7 @@
             $stmt->bindParam(':description', $this->description);
             $stmt->bindParam(':admin_id', $this->admin_id);
             $stmt->bindParam(':filepath', $this->filepath);
-            $stmt->bindParam(':part_type', $this->part_type);
+            //$stmt->bindParam(':part_type', $this->part_type);
 
             if ($stmt->execute()) {
                 return true;
@@ -156,7 +155,6 @@
             a.quiz_title,
             a.date_created,
             a.filepath,
-            a.part_type,
             a.description,
             ( SELECT Count(quiz_id) FROM quizzes
                        Where admin_id = a.admin_id

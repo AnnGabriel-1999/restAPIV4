@@ -96,4 +96,39 @@
             }
         }
 
+        public function checkExtension($filename,$desiredExt){
+            $filenameArr = explode('.', $filename);
+            if($filenameArr[1] == $desiredExt){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public function checkCSVFormat($csv,$row){
+            
+            $errorDetect = false;
+            $datacounter = 0;
+
+            while ($datarow = fgetcsv($csv)) { // pangcheck kung may ibang field na di provided
+                $datacounter++;
+
+                if(count($datarow) != $row){
+                    $errorDetect = true;
+                }
+
+                for($x=0; $x<=count($datarow)-1; $x++){ // pangcheck kung may blank
+                    if($datarow[$x] == ''){
+                        $errorDetect = true;
+                    }
+                }
+            }
+
+            if(!$errorDetect && $datacounter > 1){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
     }
