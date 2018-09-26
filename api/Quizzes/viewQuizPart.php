@@ -29,6 +29,7 @@
             $quiz_item = array(
                 'QuizID' => $quiz_id,
                 'QuizTitle' => $quiz_title,
+                'Description' => $description,
                 'TypeID' => $type_id,
                 'PartID' => $part_id,
                 'TotalQs' => $totalQs,

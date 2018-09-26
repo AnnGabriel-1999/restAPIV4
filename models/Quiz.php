@@ -599,7 +599,7 @@
     }
 
     public function viewQuizParts() {
-        $query = "SELECT q.quiz_id, q.quiz_title, qt.type_id, pr.part_id, pr.part_title, (SELECT count(question) FROM questions WHERE part_id = pr.part_id) as 'totalQs' ,pr.duration, qt.type FROM quiz_parts pr
+        $query = "SELECT q.quiz_id, q.quiz_title, q.description, qt.type_id, pr.part_id, pr.part_title, (SELECT count(question) FROM questions WHERE part_id = pr.part_id) as 'totalQs' ,pr.duration, qt.type FROM quiz_parts pr
         INNER JOIN quizzes q ON q.quiz_id = pr.quiz_id
         INNER JOIN question_types qt ON qt.type_id = pr.type_id
         WHERE q.quiz_id = $this->quizID ORDER BY pr.position ASC";
