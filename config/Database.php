@@ -5,7 +5,7 @@
         private $host = "localhost";
         private $dbname = "quizzen";
         private $username = "root";
-        private $password = "oaktreeaa";
+        private $password = "";
         private $conn;
 
         //Connect function
