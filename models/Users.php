@@ -16,6 +16,7 @@
         public $lname;
         public $order;
         public $keyword;
+        public $course_id;
 
         //Constructor
         public function __construct($db){
@@ -83,6 +84,7 @@
                             SET
                               student_id = :student_id,
                               section_id = :section_id,
+                              course_id = :course_id,
                               fname = :fname,
                               mname = :mname,
                               lname = :lname
@@ -93,6 +95,7 @@
 
             //Clean inputted data
             $this->section_id = htmlspecialchars(strip_tags($this->section_id));
+            $this->course_id = htmlspecialchars(strip_tags($this->course_id));
             $this->section_name = htmlspecialchars(strip_tags($this->section_id));
             $this->student_id = htmlspecialchars(strip_tags($this->student_id));
             $this->fname = htmlspecialchars(strip_tags($this->fname));
@@ -102,6 +105,7 @@
             //Bind paramaters
             $stmt->bindParam(':student_id', $this->student_id);
             $stmt->bindParam(':section_id', $this->section_id);
+            $stmt->bindParam(':course_id' , $this->course_id);
             $stmt->bindParam(':fname', $this->fname);
             $stmt->bindParam(':mname', $this->mname);
             $stmt->bindParam(':lname', $this->lname);
@@ -194,6 +198,19 @@
 
             return $stmt;
 
+        }
+
+        public function checkStudId($id){
+            $query = "SELECT * FROM `students` WHERE `student_id` = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $id);
+            $stmt->execute();
+
+            if($stmt->rowCount() == 0){
+                return true;
+            }else{
+                return false;
+            }
         }
 
     }
