@@ -105,11 +105,19 @@
             }
         }
 
+        public function checkCSVFormat($datarow,$rowlen){
+            if(count($datarow) == $rowlen){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
         public function checkFormat($csv,$row){
             
             $errorDetect = false;
             $datacounter = 0;
-
+            
             while ($datarow = fgetcsv($csv)) { // pangcheck kung may ibang field na di provided
                 $datacounter++;
                 if(count($datarow) != $row){
