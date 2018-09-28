@@ -17,6 +17,7 @@
         //public $course_id;
         public $old_course;
         public $errors = array();
+        public $foundCourseId;
         
         function validateCourse() {
           if (ctype_alpha(str_replace(' ', '', $this->course)) === false) {
@@ -91,5 +92,23 @@
         
         public function setCourseID($course_id){
             $this->course_id = $course_id;
+        }
+
+        public function checkIfConvertable($courseString){
+        
+            $query = "SELECT `course_id` FROM `courses` WHERE `course_prefix` = ?";
+
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $courseString);
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0){
+                $holder = $stmt->fetch(PDO::FETCH_ASSOC);
+                extract($holder);
+                $this->foundCourseId = $course_id;
+                return true;
+            }else{
+                return false;
+            }
         }
 }

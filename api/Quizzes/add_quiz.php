@@ -21,7 +21,7 @@
      if($errorCont->checkField($_POST['quizTitle'], 'Quiz Title', 5, 250)){
         if($errorCont->checkField($_POST['description'], 'Quiz Description', 10, 250)){
             if(isset($_FILES['file']['tmp_name'])) {
-                $filepath = '../../../AdmInterfaceV3/uploads/quiz/'.$_FILES['file']['name'];
+                $filepath = '../../../AdmInterfaceV2/uploads/quiz/'.$_FILES['file']['name'];
                 $quiz->filepath = $filepath;
             }
                 $quiz->quizTitle = $_POST['quizTitle'];

@@ -4,23 +4,25 @@ include_once '../../models/Quiz.php';
 include_once '../../controllers/ErrorController.php';
 include_once '../../models/Courses.php';
 include_once '../../models/Sections.php';
+include_once '../../models/Users.php';
 
 $database = new Database();
 $db = $database->connect();
 $quiz = new Quiz($db);
 $courseModel = new Courses($db);
 $sectionModel = new Sections($db);
+$userModel = new Users($db);
 $errorCont = new ErrorController();
 
 $firstlineSkipper = 0;
 $dataCounter = 0;
 $success = 0;
 
-if(isset($_FILES['multiple']['tmp_name'])){
+if (isset($_FILES['multiple']['tmp_name'])){
 	
 	if($errorCont->checkExtension($_FILES['multiple']['name'],'csv')){ // CHECK IF UPLOADED FILE IS CSV
 		$handle = fopen($_FILES['multiple']['tmp_name'], 'r');
-		if($errorCont->checkCSVFormat($handle,6)){
+		if($errorCont->checkFormat($handle,6)){
 			$handle2 = fopen($_FILES['multiple']['tmp_name'], 'r');
 			while ($data = fgetcsv($handle2)) {
 				$firstlineSkipper++;
@@ -52,7 +54,7 @@ if(isset($_FILES['multiple']['tmp_name'])){
 			if($success == $dataCounter){
 				echo json_encode( array('success' => 'CSV FILE SUCCESSFULLY ADDED!'));
 			}else{
-				echo json_encode( array('error' => 'Some of the questions failed to upload'));
+				echo json_encode( array('error' => 'Failed Uploading of Files'));
 			}
 		}else{
 			echo json_encode( array('error' => 'Your File is Unreadable try downloading our format.'));
@@ -66,7 +68,7 @@ if(isset($_FILES['multiple']['tmp_name'])){
 	
 	if($errorCont->checkExtension($_FILES['TorF']['name'],'csv')){ // CHECK IF UPLOADED FILE IS CSV
 		$handle = fopen($_FILES['TorF']['tmp_name'], 'r');
-		if($errorCont->checkCSVFormat($handle,2)){
+		if($errorCont->checkFormat($handle,2)){
 			$handle2 = fopen($_FILES['TorF']['tmp_name'], 'r');
 			while ($data = fgetcsv($handle2)) {
 				$firstlineSkipper++;
@@ -94,6 +96,8 @@ if(isset($_FILES['multiple']['tmp_name'])){
 
 			if($success == $dataCounter){
 				echo json_encode( array('success' => 'CSV FILE SUCCESSFULLY ADDED!'));
+			}else{
+				echo json_encode( array('error' => 'Failed Uploading of Files'));
 			}
 		}else{
 			echo json_encode( array('error' => 'Your File is Unreadable try downloading our format.'));
@@ -103,10 +107,10 @@ if(isset($_FILES['multiple']['tmp_name'])){
 		echo json_encode( array('error' => 'Please Upload CSV Files Only.'));
 	}
 
-}elseif(isset($_FILES['GTW']['tmp_name'])) {
+}elseif (isset($_FILES['GTW']['tmp_name'])) {
 	if($errorCont->checkExtension($_FILES['GTW']['name'],'csv')){ // CHECK IF UPLOADED FILE IS CSV
 		$handle = fopen($_FILES['GTW']['tmp_name'], 'r');
-		if($errorCont->checkCSVFormat($handle,2)){
+		if($errorCont->checkFormat($handle,2)){
 			$handle2 = fopen($_FILES['GTW']['tmp_name'], 'r');
 			while ($data = fgetcsv($handle2)) {
 				$firstlineSkipper++;
@@ -128,6 +132,8 @@ if(isset($_FILES['multiple']['tmp_name'])){
 
 			if($success == $dataCounter){
 				echo json_encode( array('success' => 'CSV FILE SUCCESSFULLY ADDED!'));
+			}else{
+				echo json_encode( array('error' => 'Failed Uploading of Files'));
 			}
 		}else{
 			echo json_encode( array('error' => 'Your File is Unreadable try downloading our format.'));
@@ -136,5 +142,47 @@ if(isset($_FILES['multiple']['tmp_name'])){
 	}else{
 		echo json_encode( array('error' => 'Please Upload CSV Files Only.'));
 	}
+
+}elseif (isset($_FILES['students']['tmp_name'])) {
+	$rejects = array();
+	if($errorCont->checkExtension($_FILES['students']['name'],'csv')){ // CHECK IF UPLOADED FILE IS CSV
+		$handle = fopen($_FILES['students']['tmp_name'], 'r');
+		if($errorCont->checkFormat($handle,6)){
+			$handle2 = fopen($_FILES['students']['tmp_name'], 'r');
+				while ($datarow = fgetcsv($handle2)) {
+					$dataCounter++;
+					if($dataCounter>1){
+						if($errorCont->checkCSVFormat($datarow,6) && $sectionModel->checkIfConvertable($datarow[2]) && $courseModel->checkIfConvertable($datarow[1]) && $userModel->checkStudId($datarow[0])){
+							$userModel->student_id = $datarow[0];
+			                $userModel->section_id = $sectionModel->foundSecId;
+			                $userModel->course_id = $courseModel->foundCourseId;
+			                $userModel->fname = $datarow[3];
+			                $userModel->mname = $datarow[4];
+			                $userModel->lname = $datarow[5];
+			                $userModel->registerStudent();
+			                $success++;
+						}else{
+							array_push($rejects,$dataCounter);
+						}
+					}
+				}
+				fclose($handle2);
+		}else{
+			fclose($handle);
+			echo json_encode( array('error' => 'Your File is unreadable try downloading our format.'));
+		}
+	}else{
+		echo json_encode( array('error' => 'Please Upload CSV Files Only.'));
+	}
+
+	if($rejects != null){ // check kung may nag error na data
+		echo json_encode($rejects ,JSON_PRETTY_PRINT);
+	}
+
+	if(($dataCounter-1) == $success){
+		echo json_encode( array('success' => 'All Students Uploaded Successful'));
+	}
 }
+
+
 ?>
