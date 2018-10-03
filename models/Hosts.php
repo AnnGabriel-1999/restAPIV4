@@ -15,7 +15,7 @@
         public $password;
         public $confirm_password;
         public $admin_id_blah;
-
+        public $mirror_id;
         //Error Code Properties
         /*
             0. Passwords do not match
@@ -40,9 +40,7 @@
         public function registerHost(){
             $insertQuery = "INSERT INTO admins
                             SET
-                              fname = :fname,
-                              mname = :mname,
-                              lname = :lname,
+                              mirror_id = :mirror_id,
                               username = :username,
                               password = :password
                               ";
@@ -51,16 +49,12 @@
             $stmt = $this->conn->prepare($insertQuery);
 
             //Clean inputted data
-            $this->fname = htmlspecialchars(strip_tags($this->fname));
-            $this->mname = htmlspecialchars(strip_tags($this->mname));
-            $this->lname = htmlspecialchars(strip_tags($this->lname));
+            $this->fnammirror_ide = htmlspecialchars(strip_tags($this->mirror_id));
             $this->username = htmlspecialchars(strip_tags($this->username));
             $this->password = htmlspecialchars(strip_tags($this->password));
 
             //Bind paramaters
-            $stmt->bindParam(':fname', $this->fname);
-            $stmt->bindParam(':mname', $this->mname);
-            $stmt->bindParam(':lname', $this->lname);
+            $stmt->bindParam(':mirror_id', $this->mirror_id);
             $stmt->bindParam(':username', $this->username);
             $stmt->bindParam(':password', $this->password);
 

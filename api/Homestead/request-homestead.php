@@ -21,9 +21,9 @@
     if($errorCont->checkField($data->empID, 'Employee ID', 10, 11)){
         if($errorCont->checkField($data->fname, 'First Name', 0, 100)){
                 if($errorCont->checkField($data->lname, 'Last Name', 0, 100)){
-                    if($errorCont->checkField($data->message, 'Message', 0, 251)){
-                        $res = $univ->selectAll2('my_admins', 'employee_id', $data->empID);
-                        if($res->rowCount() > 0){
+                   // if($errorCont->checkField($data->message, 'Message', 0, 251)){
+                        $res = $univ->selectAll2('admin_requests', 'employee_id', $data->empID);
+                        if($res->rowCount() == 1){
                             echo json_encode(
                                 array ( 'message' => 'This employee id already exists in our database' )
                             );
@@ -34,7 +34,7 @@
                                 echo json_encode (array ('error' => 'Request failed'));
                             }
                         }
-                    }
+                  //  }
                 }
             }
         }
