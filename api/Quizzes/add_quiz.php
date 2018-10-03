@@ -6,12 +6,14 @@
 
     include_once '../../config/Database.php';
     include_once '../../models/Quiz.php';
+    include_once '../../models/Universal.php';
     include_once '../../controllers/ErrorController.php';
 
     // Instantiate Classes
     $database = new Database();
     $db = $database->connect();
     $quiz = new Quiz($db);
+    $univ = new Universal($db);
     $errorCont = new ErrorController();
     
 
@@ -27,7 +29,16 @@
                 $quiz->quizTitle = $_POST['quizTitle'];
                 $quiz->description =  $_POST['description'];
                 $quiz->admin_id = $_POST['admin_id'];
-                
+                $quiz->tags = explode('/', $_POST['tags']);
+
+                foreach($quiz->tags as $tag){
+                    $res = $univ->selectAll('quiz_tags', 'admin_id', $_POST['admin_id'], 'tag_name', $tag);
+                    if($res->rowCount() <= 0){
+                        
+                    }
+                }
+
+
                 if ($quiz->addQuiz()) {
                     echo json_encode(array('success' => 'Quiz created successfully!'));
                     if(isset($_FILES['file']['tmp_name'])) {

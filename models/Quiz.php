@@ -27,6 +27,7 @@
         public $totalParts;
         public $duration;
         public $key;
+        public $tags = array();
         public $choices_keys = array();
         public $part_type;
 
