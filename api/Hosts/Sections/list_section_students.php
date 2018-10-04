@@ -40,7 +40,7 @@ if($rowcount > 0){
     echo json_encode($sec_arr,JSON_PRETTY_PRINT);
 
 }else{
-	 echo json_encode(array('message' => 'No Quiz Created.'));
+	 echo json_encode(array('message' => 'No Students Here.'));
 }
 
 ?>

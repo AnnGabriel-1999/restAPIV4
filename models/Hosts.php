@@ -152,4 +152,8 @@
       $stmt->execute();
       return $stmt;
     }
+
+    public function printPDF(){
+      return true;
+    }
 }
