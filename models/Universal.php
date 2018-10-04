@@ -62,5 +62,24 @@
         }
     }
 
+    public function insert2($tblname, $col, $col1, $colV, $col1V){
+        $insertQuery = "INSERT INTO $tblname
+                        SET $col = :$col,
+                        $col1 = :$col1";
+        $stmt = $this->conn->prepare($insertQuery);
+        $stmt->bindParam(":$col", $colV);
+        $stmt->bindParam("$col1", $col1V);
+        if($stmt->execute()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function insert2WithSubquery($tblname, $col, $col1, $colv, $subquery){
+        $result = $this->conn->exec("INSERT INTO $tblname ($col, $col1) VALUES ($colv, ($subquery))");
+        return $result;
+    }
+
 }
 

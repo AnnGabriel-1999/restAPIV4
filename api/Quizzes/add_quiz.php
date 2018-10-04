@@ -6,14 +6,16 @@
 
     include_once '../../config/Database.php';
     include_once '../../models/Quiz.php';
+    include_once '../../models/Universal.php';
     include_once '../../controllers/ErrorController.php';
 
     // Instantiate Classes
     $database = new Database();
     $db = $database->connect();
     $quiz = new Quiz($db);
+    $univ = new Universal($db);
     $errorCont = new ErrorController();
-    
+    $counter = 0;
 
     // Get Raw Data
     $data = json_decode(file_get_contents('php://input'));
@@ -27,7 +29,19 @@
                 $quiz->quizTitle = $_POST['quizTitle'];
                 $quiz->description =  $_POST['description'];
                 $quiz->admin_id = $_POST['admin_id'];
+                $quiz->tags = explode('/', $_POST['tags']);
+
+                //add tags
+                if(empty($quiz->tags)){
+                    foreach($quiz->tags as $tag){
+                        $res = $univ->selectAll('quiz_tags', 'admin_id', $_POST['admin_id'], 'tag_name', $tag);
+                        if($res->rowCount() <= 0){
+                            $univ->insert2('quiz_tags', 'admin_id', 'tag_name', $_POST['admin_id'], $tag);
+                        }
+                    }
+                }
                 
+
                 if ($quiz->addQuiz()) {
                     echo json_encode(array('success' => 'Quiz created successfully!'));
                     if(isset($_FILES['file']['tmp_name'])) {
@@ -36,6 +50,17 @@
                 } else {
                     echo json_encode(array('error' => 'Failed to create quiz!'));
                 }
+
+                if(empty($quiz->tags)) {
+                    foreach($quiz->tags as $tag){
+                        $res = $univ->selectAll('quiz_tags', 'admin_id', $_POST['admin_id'], 'tag_name', $tag);
+                        while($row = $res->fetch(PDO::FETCH_ASSOC)){
+                            extract($row);
+                            $univ->insert2WithSubquery('quiz_tag_colllections', 'tag_id', 'quiz_id', $tag_id, 'select max(quiz_id) from quizzes');
+                        }
+                    }    
+                }
+                
         }   
     }
 
