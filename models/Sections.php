@@ -17,6 +17,7 @@
         private $course;
         private $section;
         public $errors = array();
+        public $foundSecId;
 
 
 
@@ -128,6 +129,24 @@
 
        public function setSectionID($sectionID){
             $this->section_id = $sectionID;
+        }
+
+        public function checkIfConvertable($courseString){
+
+            $query = "SELECT a.section_id , a.section FROM sections a left join courses b on a.course_id = b.course_id WHERE a.section = ? ";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $courseString);
+            $stmt->execute();
+
+            if($stmt->rowCount() > 0){
+                $holder = $stmt->fetch(PDO::FETCH_ASSOC);
+                extract($holder);
+                $this->foundSecId = $section_id;
+                return true;
+            }else{
+                return false;
+            }
+
         }
 
     }

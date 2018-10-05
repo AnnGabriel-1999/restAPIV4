@@ -48,6 +48,8 @@
         
         private $section_id;
 
+        public $partID;
+
 
         // Constructor
         public function __construct($db) {
@@ -771,5 +773,22 @@
            return false;
        }
    }
+
+   public function selectQuizType($adminid , $quizid){
+        $query = 'SELECT q.quiz_id, p.type_id, t.type 
+        FROM quizzes q 
+        INNER JOIN quiz_parts p 
+        ON q.quiz_id = p.quiz_id 
+        INNER JOIN question_types t on t.type_id = p.type_id
+        WHERE q.admin_id = ?';
+    }
+
+    public function getTypePartId(){
+        $query = "SELECT * FROM quiz_parts WHERE quiz_id = :quizId";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':quizId', $this->quizID);
+        $stmt->execute();
+        return $stmt;
+    }
 
 }
