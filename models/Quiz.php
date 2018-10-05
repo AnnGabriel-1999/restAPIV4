@@ -18,6 +18,7 @@
         public $description;
         public $filepath;
         public $totalQuiz;
+        public $MaxID;
         
         //Quiz Part Properties
         public $type_id;
@@ -112,6 +113,65 @@
 
            return $stmt;
        }
+        
+        //Read Questions
+       public function publishedSegment() {
+           //Create query
+       $query = " SELECT
+                   a.question,
+                   a.question_id,
+                   b.quiz_id,
+                   a.part_id,
+                   (
+                       SELECT value from answer_choices
+                       WHERE a.answer = choice_id
+                   )as rightAnswer,
+                   (
+                       SELECT
+                       value
+                       from answer_choices
+                       WHERE
+                       a.question_id = question_id
+                       AND post = 'a' OR 'A'
+                   )as choice1,
+                    (
+                       SELECT value
+                       from answer_choices
+                       WHERE
+                       a.question_id = question_id
+                       AND post = 'b' OR 'B'
+                   )as choice2,
+                    (
+                       SELECT value
+                       from answer_choices
+                       WHERE
+                       a.question_id = question_id
+                       AND post = 'c' OR 'C'
+                   )as choice3,
+                    (
+                       SELECT value
+                       from answer_choices
+                       WHERE
+                       a.question_id = question_id
+                       AND post = 'd' OR 'D'
+                   )as choice4
+                   FROM
+                   questions a,
+                   quizzes b,
+                   admins c
+                   WHERE
+                   c.admin_id = b.admin_id
+                   AND
+                  b.quiz_id = $this->quizID";
+
+           //Prepare Statement
+           $stmt = $this->conn->prepare($query);
+
+           //Execute Query
+           $stmt->execute();
+
+           return $stmt;
+       }
 
        public function addQuiz() {
             $insertQuery = "INSERT INTO quizzes
@@ -119,7 +179,8 @@
                               quiz_title = :quizTitle,
                               admin_id = :admin_id,
                               description = :description,
-                              filepath = :filepath";
+                              filepath = :filepath,
+                              part_type = :part_type";
 
             $stmt = $this->conn->prepare($insertQuery);
 
@@ -127,7 +188,7 @@
             $this->description = htmlspecialchars(strip_tags($this->description));
             $this->admin_id = htmlspecialchars(strip_tags($this->admin_id));
             $this->filepath = htmlspecialchars(strip_tags($this->filepath));
-            //$this->part_type = htmlspecialchars(strip_tags($this->part_type));
+            $this->part_type = htmlspecialchars(strip_tags($this->part_type));
 
             // Bind parameters
 
@@ -138,7 +199,7 @@
             $stmt->bindParam(':description', $this->description);
             $stmt->bindParam(':admin_id', $this->admin_id);
             $stmt->bindParam(':filepath', $this->filepath);
-            //$stmt->bindParam(':part_type', $this->part_type);
+            $stmt->bindParam(':part_type', $this->part_type);
 
             if ($stmt->execute()) {
                 return true;
@@ -152,13 +213,16 @@
             //Create query
             $query = "SELECT
             a.quiz_id,
+            a.part_type,
             a.quiz_title,
             a.date_created,
             a.filepath,
             a.description,
             ( SELECT Count(quiz_id) FROM quizzes
-                       Where admin_id = a.admin_id
-                       ) as totalQuiz
+            Where admin_id = a.admin_id
+                       ) as totalQuiz,
+            (SELECT MAX(quiz_id) FROM quizzes
+             Where admin_id = a.admin_id) as MaxID
             FROM
             quizzes a left join admins b
             on a.quiz_id = b.admin_id
@@ -190,6 +254,29 @@
             $stmt->execute();
 
             return $stmt;
+        }
+        
+         public function setType() {
+            $insertQuery = "INSERT INTO quiz_parts SET
+                                type_id = :type_id,
+                                quiz_id = :quiz_id,
+                                duration = :duration,
+                                position = :position";
+
+            $stmt = $this->conn->prepare($insertQuery);
+
+            // Bind parameters
+            $stmt->bindParam(':type_id', $this->type_id);
+            $stmt->bindParam(':quiz_id', $this->quizID);
+            $stmt->bindParam(':position', $this->totalParts);
+            $stmt->bindParam(':duration', $this->duration);
+            
+            // Execute
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
          //Update
@@ -599,7 +686,7 @@
     }
 
     public function viewQuizParts() {
-        $query = "SELECT q.quiz_id, q.quiz_title, q.description, qt.type_id, pr.part_id, pr.part_title, (SELECT count(question) FROM questions WHERE part_id = pr.part_id) as 'totalQs' ,pr.duration, qt.type FROM quiz_parts pr
+        $query = "SELECT q.quiz_id, q.quiz_title, q.description, qt.type_id, pr.part_id, pr.part_title, (SELECT count(question) FROM questions WHERE part_id = pr.part_id) as 'totalQs' ,pr.duration,pr.position,  qt.type FROM quiz_parts pr
         INNER JOIN quizzes q ON q.quiz_id = pr.quiz_id
         INNER JOIN question_types qt ON qt.type_id = pr.type_id
         WHERE q.quiz_id = $this->quizID ORDER BY pr.position ASC";

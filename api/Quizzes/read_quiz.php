@@ -31,8 +31,10 @@
                 'quizTitle' => $quiz_title,
                 'date_created' => $date_created, 
                 'filepath' => $filepath,
+                'part_type' => $part_type,
                 'description' => $description,
-                'totalQuiz' => $totalQuiz
+                'totalQuiz' => $totalQuiz,
+                'MaxID' => $MaxID
             );
 
             //Push to data array

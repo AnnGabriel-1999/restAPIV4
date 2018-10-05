@@ -27,6 +27,7 @@
                 $quiz->quizTitle = $_POST['quizTitle'];
                 $quiz->description =  $_POST['description'];
                 $quiz->admin_id = $_POST['admin_id'];
+                $quiz->part_type = $_POST['part_type'];
                 
                 if ($quiz->addQuiz()) {
                     echo json_encode(array('success' => 'Quiz created successfully!'));
