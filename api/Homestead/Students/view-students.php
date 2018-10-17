@@ -32,11 +32,6 @@
             );
             array_push($studentData, $studentInfo);
         }
-<<<<<<< HEAD
-    }
-
-    echo json_encode ($studentData); 
-=======
         echo json_encode ($studentData); 
     }else{
         echo json_encode (
@@ -45,6 +40,3 @@
             )
         );
     }
-
-   
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0

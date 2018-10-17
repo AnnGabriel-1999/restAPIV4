@@ -2,10 +2,7 @@
         //Headers
         header('Access-Control-Allow-Origin: *');
         header('Content-Type: application/json');
-<<<<<<< HEAD
-=======
         
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0
 
         include_once '../../../config/Database.php';
         include_once '../../../models/Universal.php';
@@ -24,21 +21,14 @@
             while ($row = $res->fetch(PDO::FETCH_ASSOC)){
                 extract($row);
                 $empInfo = array(
-<<<<<<< HEAD
-=======
                     'request_id' => $req_id,
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0
                     'employee_id' => $employee_id,
                     'fname' => $fname,
                     'mname' => $mname,
                     'lname' => $lname,
                     'message' => $message,
-<<<<<<< HEAD
-                    'date_requested' => $date_requested
-=======
                     'date_requested' => $date_requested,
                     'date_processed' => $date_processed
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0
                 );
                 array_push($employeeData, $empInfo);
             }
@@ -46,8 +36,5 @@
         }else{
             echo json_encode(array('message' => 'No requests'));
         }
-<<<<<<< HEAD
-=======
 
 ?>
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0

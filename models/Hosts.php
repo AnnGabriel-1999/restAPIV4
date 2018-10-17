@@ -124,21 +124,30 @@
     }
 
     public function listCourses(){
-      $query = "SELECT * FROM `courses`";
+      $query = "SELECT * FROM courses";
       $stmt = $this->conn->prepare($query);
       $stmt->execute();
       return $stmt;
     }
 
     public function listSections(){
-      $query = "SELECT s.section_id, s.course_id, c.course_prefix, s.section, c.course FROM sections s INNER JOIN courses c ON s.course_id = c.course_id";
+      $query = "SELECT s.section_id, s.course_id, s.admin_id, c.course_prefix, s.section, c.course FROM sections s INNER JOIN courses c ON s.course_id = c.course_id";
       $stmt = $this->conn->prepare($query);
       $stmt->execute();
       return $stmt;
     }
 
     public function listNamesA(){
-      $query = "SELECT * FROM `admins`";
+      $query = "SELECT * FROM admins";
+      $stmt = $this->conn->prepare($query);
+      $stmt->execute();
+      return $stmt;
+    }
+
+    public function listNamesS(){
+      $query = "SELECT s.student_id, s.fname, s.mname, s.lname, sec.section,c.course FROM
+                students s inner join sections sec on s.section_id = sec.section_id
+                inner join courses c on sec.course_id = c.course_id";
       $stmt = $this->conn->prepare($query);
       $stmt->execute();
       return $stmt;

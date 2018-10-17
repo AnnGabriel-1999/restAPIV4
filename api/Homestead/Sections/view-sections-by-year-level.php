@@ -31,15 +31,7 @@
             );
             array_push($sectionData, $sectionInfo);
         }
-<<<<<<< HEAD
-    }
-
-    echo json_encode ($sectionData); 
-=======
         echo json_encode ($sectionData); 
     }else{
         echo json_encode(array('message' => 'No section'));
     }
-
-   
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0

@@ -21,11 +21,7 @@
                 if ($univ->updateSomething('school_years', 'status', '1', 'schoolyear_id', $_GET['yrid'])) {
                     echo json_encode ( array ('message' => 'Success'));
                 }else{
-<<<<<<< HEAD
-                    echo json_encode ( array ('message' => 'Error'));
-=======
                     echo json_encode ( array ('error' => 'Error'));
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0
                 }
             }
         }
@@ -33,11 +29,7 @@
         if ($univ->updateSomething('school_years', 'status', '1', 'schoolyear_id', $_GET['yrid'])) {
             echo json_encode ( array ('message' => 'Success'));
         }else{
-<<<<<<< HEAD
-            echo json_encode ( array ('message' => 'Error'));
-=======
             echo json_encode ( array ('error' => 'Error'));
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0
         }
     }
 
