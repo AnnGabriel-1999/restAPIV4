@@ -1,7 +1,7 @@
 <?php
     // Headers
     header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST');
+  //  header('Access-Control-Allow-Methods: POST');
     header('Access-Control-Allow-Headers: Access-Control-Allow-Methods, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
 
     include_once '../../config/Database.php';
@@ -15,20 +15,20 @@
     $users = new Users($db);
     $univ = new Universal($db);
     $errorCont = new ErrorController();
-    $studentInfo = array();
+    $studentInfo['student'] = array();
     
-    $data = json_decode(file_get_contents('php://input'));
+ //   $data = json_decode(file_get_contents('php://input'));
 
-    if($errorCont->checkField($data->studentNumber, 'Student Number', 10, 11)){
+    //if($errorCont->checkField($data->studentNumber, 'Student Number', 10, 11)){
        
-        $res = $univ->selectAll('students', 'student_id', $data->studentNumber, 'status', 'ACTIVE');
+        $res = $univ->selectAll('students', 'student_id', $_GET['studentNum'], 'status', 'ACTIVE');
 
         if($res->rowCount() > 0){
             echo json_encode(
                 array('message' => 'This student number is already used')
             );
         }else{
-            $users->setStudentID($data->studentNumber);
+            $users->setStudentID($_GET['studentNum']);
             $res = $users->fetchStudentInfo();
 
             if ($res->rowCount() < 1){
@@ -39,20 +39,23 @@
                 while($row = $res->fetch(PDO::FETCH_ASSOC)){
                     extract($row);
                     $studentData = array(
-                        'student_id' => $student_id,
-                        'fname' => $fname,
-                        'mname' => $mname, 
-                        'lname' => $lname, 
-                        'course' => $course,
-                        'section' => $section
+                        
+                            'student_id' => $student_id,
+                            'fname' => $fname,
+                            'mname' => $mname, 
+                            'lname' => $lname, 
+                            'course' => $course,
+                            'section' => $section
+                        
+                       
                     );
-                    array_push($studentInfo, $studentData);
+                    array_push($studentInfo['student'], $studentData);
                 }
-                echo json_encode($studentInfo);
+                echo json_encode($studentInfo['student']);
             }
         }
-   }
+  // }
     
-   if($errorCont->errors != null){
-        echo json_encode($errorCont->errors);        
-   }
+//    if($errorCont->errors != null){
+//         echo json_encode($errorCont->errors);        
+//    }

@@ -13,38 +13,29 @@
     //Instantiate Users Class
     $univ = new Universal($db);
     $secs = new Sections($db);
-    $studentData = array();
+    $sectionData = array();
+
 
     $secs->setSectionID($_GET['section_id']);
-    $secs->setSchoolYear($_GET['syrid']);
-    $res = $secs->viewSectionsStudents();
+    $secs->setCourseID($_GET['course_id']);
+    $res = $secs->getCourseAndSection();
     
     if($res->rowCount() > 0) {
         while ($row = $res->fetch(PDO::FETCH_ASSOC)){
             extract($row);
-            $studentInfo = array(
-                'student_id' => $student_id,
-                'section_id' => $section_id,
-                'status' => $status,
-                'fname' => $fname,
-                'mname' => $mname,
-                'lname' => $lname
+            $sectionInfo = array(
+                'pref' => $course_prefix,
+                'section' => $section
             );
-            array_push($studentData, $studentInfo);
+            array_push($sectionData, $sectionInfo);
         }
-<<<<<<< HEAD
-    }
-
-    echo json_encode ($studentData); 
-=======
-        echo json_encode ($studentData); 
+        echo json_encode ($sectionData); 
     }else{
         echo json_encode (
             array(
-                'message' => 'No registered student'
+                'error' => 'No registered section'
             )
         );
     }
 
    
->>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0

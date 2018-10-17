@@ -60,8 +60,21 @@
         }
     }
 
+    public function update2($tblname, $col, $colV, $col1, $col1V, $colC, $colCV){
+        $updateQuery = "UPDATE $tblname SET $col = :$col, $col1 = :$col1 WHERE $colC = :$colC";
+        $stmt = $this->conn->prepare($updateQuery);
+        $stmt->bindParam(":$col", $colV);
+        $stmt->bindParam(":$col1", $col1V);
+        $stmt->bindParam("$colC", $colCV);
+        if($stmt->execute()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public function insert5($tblname, $col, $col1, $col2, $col3, $col4, $colV, $col1V, $col2V, $col3V, $col4V){
-        $insertQuery = "INSERT INTO $tblname 
+        $insertQuery = "INSERT INTO $tblname                                
                         SET $col = :$col,
                         $col1 = :$col1,
                         $col2 = :$col2,
@@ -115,5 +128,19 @@
         return $result;
     }
 
+    public function updateWithKey($tblname, $col, $colV, $col1, $col1V, $colC, $colCV){
+        $result = $this->conn->exec("UPDATE $tblname SET $col = $colV, $col1 = $col1V WHERE $colC = $colCV");
+        return $result;
+    }
+
+    /*custom*/
+    public function getAllSY(){
+        $query = "select s.schoolyear_id, s.schoolYear, s.semester, (select COUNT(DISTINCT section_id)
+                  FROM sections_handled WHERE schoolyear_id = s.schoolyear_id) 
+                  AS total FROM school_years s order by s.status desc";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
 }
 

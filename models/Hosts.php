@@ -147,4 +147,23 @@
     public function printPDF(){
       return true;
     }
+
+    public function getAdmins() {
+        $query = "SELECT ma.employee_id, a.admin_id, ma.fname, ma.mname, ma.lname, (SELECT count(DISTINCT section_id) FROM sections_handled 
+        where admin_id = a.admin_id and schoolyear_id IN (SELECT schoolyear_id from school_years WHERE status = 1 )) as 'sections'
+        FROM my_admins ma INNER JOIN admins a on ma.employee_id = a.mirror_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function getRegisteredAdmins() {
+        $query = "SELECT a.mirror_id, concat(ma.fname, ' ', ma.lname) as name, count(distinct sh.section_id) as 'secs',
+        count(distinct sec.course_id) as 'courses' FROM admins a INNER JOIN my_admins ma on a.mirror_id = ma.employee_id
+        INNER JOIN sections_handled sh on a.admin_id = sh.admin_id INNER JOIN sections sec on sh.section_id = sec.section_id 
+        where sh.schoolyear_id in (select schoolyear_id from school_years where status = 1)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
 }

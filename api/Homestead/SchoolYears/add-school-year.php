@@ -19,6 +19,7 @@
     //Get Raw Data
     $data = json_decode(file_get_contents('php://input'));
 
+<<<<<<< HEAD
     if($errorCont->checkField($data->schoolyear, 'School Year', 1, 150)){
         for ($ctr=1; $ctr<4; $ctr++){
             if($univ->insert2('school_years', 'schoolYear', 'semester', $data->schoolyear, $ctr)){
@@ -36,4 +37,32 @@
     if($errorCont->errors != null){
         echo json_encode($errorCont->errors);        
     }
+=======
+    $res = $univ->selectAll2('school_years', 'schoolYear', $data->schoolYear);
+    $x = $res->rowCount();
+
+    if($x == 0){
+        if($errorCont->checkField($data->schoolyear, 'School Year', 1, 150)){
+            for ($ctr=1; $ctr<4; $ctr++){
+                if($univ->insert2('school_years', 'schoolYear', 'semester', $data->schoolyear, $ctr)){
+                    $x++;
+                }
+            }
+        }
+    
+        if ($x == 3){   
+            echo json_encode (array ('success' => "Schoolyear added", 'count' => "$x"));
+        }else{
+            echo json_encode (array ('error' => 'Schoolyear not added.'));
+        }
+    
+        if($errorCont->errors != null){
+            echo json_encode($errorCont->errors);        
+        }
+    }else{
+        echo json_encode(array('message' => $x));
+    }
+
+    
+>>>>>>> cbac1f60c0f825d17fdee53cb11885c875ad9fd0
 ?>

@@ -43,8 +43,6 @@
                         }
                     }
                 }
-                
-
                 if ($quiz->addQuiz()) {
                     echo json_encode(array('success' => 'Quiz created successfully!'));
                     if(isset($_FILES['file']['tmp_name'])) {

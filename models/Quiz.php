@@ -802,6 +802,7 @@
         return $stmt;		        
     }
 
+
     public function checkStream($adminId){
         $query = "SELECT a.admin_id FROM admins a INNER JOIN up_quiz u ON a.admin_id = u.admin_id WHERE :admin_id IN (SELECT admin_id FROM up_quiz)";
         $stmt = $this->conn->prepare($query);
@@ -826,6 +827,4 @@
             return false;
         }
     }
-
-     
 }
