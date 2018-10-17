@@ -18,6 +18,8 @@
         private $section;
         public $errors = array();
         public $foundSecId;
+        private $year_level;
+        private $schoolyear_id;
 
 
 
@@ -32,7 +34,7 @@
             if($stmt->rowCount()>0) {
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
                 $this->course_id = $row['course_id'];
-                return true;
+                return $this->course_id;
             }else{
                 $this->errors['field'] = "course";
                 $this->errors['message'] = "Course entered is non existent.";
@@ -123,12 +125,24 @@
             $this->admin_id = $admin_id;
         }
 
+        public function setCourse($course){
+            $this->course = $course;
+        }
+
         public function setSection($sectionName){
             $this->section = $sectionName;
         }
 
        public function setSectionID($sectionID){
             $this->section_id = $sectionID;
+        }
+
+        public function setSchoolYear($schoolyear_id){
+            $this->schoolyear_id = $schoolyear_id;
+        }
+
+        public function setYearLevel($yearLevel){
+            $this->year_level = $yearLevel;
         }
 
         public function checkIfConvertable($courseString){
@@ -147,6 +161,54 @@
                 return false;
             }
 
+        }
+
+        public function viewSectionsByCourse(){
+            $query = "SELECT s.section_id, s.section, s.year_level, (select count(*) from students_sections where section_id = s.section_id and schoolyear_id = $this->schoolyear_id) as 'students' FROM sections s 
+                      WHERE s.course_id = $this->course_id ORDER BY year_level ASC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;
+        }
+
+        public function viewSectionsByYearLevel(){
+            $query = "SELECT s.section_id, s.section, s.year_level, (select count(*) from students_sections where section_id = s.section_id  and schoolyear_id = $this->schoolyear_id) as 'students' FROM sections s 
+                     WHERE s.course_id = $this->course_id and s.year_level = $this->year_level";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;
+        }
+
+        public function viewAssignedProf(){
+            $query = "SELECT s.handling_id, a.admin_id, concat(ma.fname, ' ', ma.lname) as 'admin' FROM sections_handled s INNER JOIN admins a on s.admin_id = a.admin_id 
+                      INNER JOIN my_admins ma on a.mirror_id = ma.employee_id WHERE s.section_id = $this->section_id   and s.schoolyear_id = $this->schoolyear_id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;
+        }
+
+        public function viewVacantProf() {
+            $query = "SELECT a.admin_id, concat(ma.fname, ' ', ma.lname) as 'admin' from admins a INNER JOIN my_admins ma on a.mirror_id = ma.employee_id
+                      where a.admin_id not IN (SELECT admin_id FROM sections_handled where section_id = $this->section_id and schoolyear_id = $this->schoolyear_id)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;        
+        }
+
+        public function viewSectionsStudents(){ 
+            $query = "SELECT st.student_id, st.fname, st.mname, st.lname, st.status, stc.section_id FROM students st INNER JOIN students_sections stc 
+                      ON st.student_id = stc.student_id WHERE stc.section_id = $this->section_id and stc.schoolyear_id = $this->schoolyear_id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;            
+        }
+
+        public function getCourseAndSection(){
+            $query = "SELECT c.course_prefix, s.section from courses c INNER JOIN sections s on c.course_id = s.course_id 
+                      where c.course_id = $this->course_id and s.section_id = $this->section_id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;    
         }
 
     }

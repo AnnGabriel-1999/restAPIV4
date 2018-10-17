@@ -35,7 +35,8 @@
                 'TotalQs' => $totalQs,
                 'PartTitle' => $part_title,
                 'Duration' => $duration,
-                'Type' => $type
+                'Type' => $type,
+                'Position' => $position
             );
             
             // Push to data array
