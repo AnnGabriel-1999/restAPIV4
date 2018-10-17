@@ -4,7 +4,7 @@
   header('Access-Control-Allow-Methods: POST');
   header('Access-Control-Allow-Headers: Access-Control-Allow-Methods, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With');
 
-      include_once '../../config/Database.php';
+    include_once '../../config/Database.php';
     include_once '../../models/Hosts.php';
     include_once '../../controllers/ErrorController.php';
 

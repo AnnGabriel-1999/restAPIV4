@@ -20,6 +20,7 @@
             extract($row);
             $tag_item = array(
                 'tag_name' => $tag_name,
+                'tag_id' => $tag_id,
                 'date_created' => $date_created
             );
             array_push($tags_arr['data'], $tag_item);

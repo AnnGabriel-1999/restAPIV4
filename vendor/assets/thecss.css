@@ -37,6 +37,10 @@
 	margin:4px 0;
 }
 
+table{
+	overflow: wrap;
+}
+
 .midDiv{
 	padding: 5px 0;
 }
@@ -47,7 +51,7 @@
 
 .partDiv{
 	width: 100%;
-	padding-bottom: 10px;
+	padding-bottom: 15px;
 }
 
 .partTitleGuess{
@@ -59,7 +63,24 @@
 	padding-left: 10px;
 }
 
+.partTitleArrange{
+	width: 100%;
+	height: 40px;
+	background-color: white;
+	line-height: 40px;
+	color: #012B74;
+	padding-left: 10px;
+}
+
 .partTitleTrue{
+	width: 100%;
+	height: 40px;
+	background-color: white;
+	line-height: 40px;
+	color: #F4C20D;
+	padding-left: 10px;
+}
+.partTitleArr{
 	width: 100%;
 	height: 40px;
 	background-color: white;
@@ -189,5 +210,32 @@ table.tableTrue .trueAns{
 }
 
 table.tableTrue tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* TABLE FOR MULTI */
+table.tableArr{
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+table.tableArr th{
+	background-color: #003366;
+	color: white;
+}
+
+table.tableArr th, table.tableArr td {
+    text-align: left;
+    padding: 8px;
+}
+
+table.tableArr .ArrAns{
+	color: #003366;
+	font-weight: bold;
+}
+
+table.tableArr tr:nth-child(even) {
     background-color: #f2f2f2;
 }

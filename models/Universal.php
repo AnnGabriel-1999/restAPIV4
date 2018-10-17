@@ -13,7 +13,7 @@
 
     //select all with 2 where conditions
     public function selectAll($tblname, $col, $colCompare, $col2, $col2Compare) {
-        $query = "SELECT * FROM $tblname WHERE $col = :$col and $col2 = :$col2";
+        $query = "SELECT * FROM $tblname WHERE $col = :$col AND $col2 = :$col2";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":$col", $colCompare);
         $stmt->bindParam(":$col2", $col2Compare);
@@ -26,6 +26,24 @@
         $query = "SELECT * FROM $tblname WHERE $col = :$col";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":$col", $colCompare);
+        $stmt->execute();
+        return $stmt;
+    }
+
+
+
+    public function select3WithSubquery($tblname, $col, $col1, $col2, $subquery, $subqueryColName){
+        $query = "SELECT $col, $col1, $col2, $subquery as $subqueryColName from $tblname";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+
+    public function select3WithSubquery2($tblname, $col, $col2, $subquery, $subqueryColName, $cond, $cond1, $condV, $cond1V){
+        $query = "SELECT $col,  $col2, $subquery as '$subqueryColName' from $tblname WHERE $cond = :$condV AND $cond1 =:$cond1V";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(":$cond", $condV);
+        $stmt->bindValue(":$cond1", $cond1V);
         $stmt->execute();
         return $stmt;
     }
@@ -60,6 +78,41 @@
         }else{
             return false;
         }
+    }
+
+    public function insert2($tblname, $col, $col1, $colV, $col1V){
+        $insertQuery = "INSERT INTO $tblname
+                        SET $col = :$col,
+                        $col1 = :$col1";
+        $stmt = $this->conn->prepare($insertQuery);
+        $stmt->bindParam(":$col", $colV);
+        $stmt->bindParam(":$col1", $col1V);
+        if($stmt->execute()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function insert3($tblname, $col, $col1, $col2, $colV, $col1V, $col2V){
+        $insertQuery = "INSERT INTO $tblname
+                        SET $col = :$col,
+                        $col1 = :$col1,
+                        $col2 = :$col2";
+        $stmt = $this->conn->prepare($insertQuery);
+        $stmt->bindParam(":$col", $colV);
+        $stmt->bindParam(":$col1", $col1V);
+        $stmt->bindParam(":$col2", $col2V);
+        if($stmt->execute()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function insert2WithSubquery($tblname, $col, $col1, $colv, $subquery){
+        $result = $this->conn->exec("INSERT INTO $tblname ($col, $col1) VALUES ($colv, ($subquery))");
+        return $result;
     }
 
 }

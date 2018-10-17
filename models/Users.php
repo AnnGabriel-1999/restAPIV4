@@ -17,7 +17,8 @@
         public $order;
         public $keyword;
         public $course_id;
-
+        private $student_id;
+        private $schoolyear_id;
         //Constructor
         public function __construct($db){
             $this->conn = $db;
@@ -83,7 +84,6 @@
             $insertQuery = "INSERT INTO students
                             SET
                               student_id = :student_id,
-                              section_id = :section_id,
                               course_id = :course_id,
                               fname = :fname,
                               mname = :mname,
@@ -94,9 +94,9 @@
             $stmt = $this->conn->prepare($insertQuery);
 
             //Clean inputted data
-            $this->section_id = htmlspecialchars(strip_tags($this->section_id));
+            //$this->section_id = htmlspecialchars(strip_tags($this->section_id));
             $this->course_id = htmlspecialchars(strip_tags($this->course_id));
-            $this->section_name = htmlspecialchars(strip_tags($this->section_id));
+            //$this->section_name = htmlspecialchars(strip_tags($this->section_id));
             $this->student_id = htmlspecialchars(strip_tags($this->student_id));
             $this->fname = htmlspecialchars(strip_tags($this->fname));
             $this->mname = htmlspecialchars(strip_tags($this->mname));
@@ -104,7 +104,7 @@
 
             //Bind paramaters
             $stmt->bindParam(':student_id', $this->student_id);
-            $stmt->bindParam(':section_id', $this->section_id);
+            //$stmt->bindParam(':section_id', $this->section_id);
             $stmt->bindParam(':course_id' , $this->course_id);
             $stmt->bindParam(':fname', $this->fname);
             $stmt->bindParam(':mname', $this->mname);
@@ -211,6 +211,27 @@
             }else{
                 return false;
             }
+        }
+
+        public function setStudentID($studentID){
+            $this->student_id = $studentID;
+        }
+
+        public function setSchoolYear($schoolYear){
+            $this->schoolyear_id = $schoolYear;
+        }
+
+        public function fetchStudentInfo(){
+            $query = "SELECT s.student_id, s.fname, s.mname, s.lname, sts.section_id, sec.section, c.course 
+                      from students s inner join students_sections sts on s.student_id = sts.student_id
+                      inner JOIN sections sec on sts.section_id = sec.section_id 
+                      INNER JOIN courses c on sec.course_id = c.course_id 
+                      WHERE s.student_id  = $this->student_id AND sts.schoolyear_id =
+                      (SELECT schoolyear_id from school_years WHERE status = 1)
+                      and s.status = 'INACTIVE'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;      
         }
 
     }
