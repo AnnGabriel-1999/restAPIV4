@@ -124,7 +124,7 @@
     }
 
     public function listCourses(){
-      $query = "SELECT * FROM `courses`";
+      $query = "SELECT * FROM courses";
       $stmt = $this->conn->prepare($query);
       $stmt->execute();
       return $stmt;
@@ -138,7 +138,7 @@
     }
 
     public function listNamesA(){
-      $query = "SELECT * FROM `admins`";
+      $query = "SELECT * FROM admins";
       $stmt = $this->conn->prepare($query);
       $stmt->execute();
       return $stmt;

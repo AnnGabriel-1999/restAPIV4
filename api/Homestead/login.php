@@ -8,13 +8,13 @@
     include_once '../../models/Universal.php';
     include_once '../../controllers/ErrorController.php';
 
-	$database = new Database();
-	$db = $database->connect();
-	$univ = new Universal($db);
+  $database = new Database();
+  $db = $database->connect();
+  $univ = new Universal($db);
     $errorCont = new ErrorController();
     $ids = 0;
-	//GETS THE SENT DATA
-	$data = json_decode(file_get_contents('php://input'));
+  //GETS THE SENT DATA
+  $data = json_decode(file_get_contents('php://input'));
 
   if($errorCont->checkField($data->sa_username,"Username",1,20)){
     if($errorCont->checkField($data->sa_password,"Password",1,20)){

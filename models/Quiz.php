@@ -802,4 +802,29 @@
         return $stmt;		        
     }
 
+
+    public function checkStream($adminId){
+        $query = "SELECT a.admin_id FROM admins a INNER JOIN up_quiz u ON a.admin_id = u.admin_id WHERE :admin_id IN (SELECT admin_id FROM up_quiz)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':admin_id', $adminId);
+        $stmt->execute();	
+        $rowCount = $stmt->rowCount();
+
+        if($rowCount > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function StreamQuiz($admin_id , $section_id , $quiz_id){
+        $query = "INSERT INTO `up_quiz`(`admin_id`, `section_id`, `quiz_id`) VALUES ($admin_id,$section_id,$quiz_id)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':admin_id', $adminId);
+        if($stmt->execute()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

@@ -19,7 +19,6 @@
 
     //Get Raw Data
     $data = json_decode(file_get_contents('php://input'));
-
     if($errorCont->checkField($data->student_id,"Student Number",10,11)){
         if($errorCont->checkField($data->fname,"First Name",1,101)){
             if($errorCont->checkField($data->fname,"Lastname Name",1,101)){
@@ -43,12 +42,12 @@
 
                 if($univ->insert3('students_sections', 'student_id', 'section_id', 'schoolyear_id', $users->getStudentID(), $users->section_id, $data->schoolyear_id )){
                     echo json_encode(array('success' => 'Student Insertion Succeed.'));
-                }
+                }  
             }
         }
+
     }
     
-
     if($errorCont->errors != null){
         echo json_encode($errorCont->errors);
     }

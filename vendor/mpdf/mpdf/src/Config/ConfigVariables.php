@@ -269,7 +269,7 @@ class ConfigVariables
 			'keep_table_proportions' => true,
 			// automatically reduce fontsize in table if words would have to split ( not in CJK)
 			// 0 or false to disable, value (if set) gives maximum factor to reduce fontsize
-			'shrink_tables_to_fit' => 1.4,
+			'shrink_tables_to_fit' => false,
 
 			// If page-break-inside:avoid but cannot fit on full page without
 			// exceeding autosize, setting this value to true will force respect for autosize, and disable the page-break-inside:avoid

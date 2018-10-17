@@ -203,6 +203,18 @@
             return $stmt;            
         }
 
+        // public function getHeldSections($adminId){
+
+        //     $query = "SELECT sh.section_id, sec.section FROM sections sec INNER JOIN sections_handled sh 
+        //     ON sec.section_id = sh.section_id 
+        //     WHERE sh.admin_id = :admin_id and sh.schoolyear_id IN (SELECT schoolyear_id FROM school_years WHERE status = 1)";
+
+        //     $stmt = $this->conn->prepare($query);
+        //     $stmt->bindParam(':admin_id', $adminId);
+        //     $stmt->execute();
+        //     return $stmt; 
+        // }
+
         public function getCourseAndSection(){
             $query = "SELECT c.course_prefix, s.section from courses c INNER JOIN sections s on c.course_id = s.course_id 
                       where c.course_id = $this->course_id and s.section_id = $this->section_id";

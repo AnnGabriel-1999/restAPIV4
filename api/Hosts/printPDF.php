@@ -84,6 +84,50 @@ function produceBody(){
 	while($partInfo =  $result->fetch(PDO::FETCH_OBJ)){ // habang may nakukuha kang part doon sa quiz
 		$partCntr++;
 		$quizModel->partID = $partInfo->part_id;
+		if($partInfo->type_id == 3){
+
+			$qCounter = 0;
+
+			$body .="<div class='partDiv'>
+							<div class='partTitleArr'>
+								<b>Part ".$partCntr.": ".$partInfo->part_title."</b> <b>/ Arrange the Sequence </b>
+							</div>
+
+								<table class='tableArr'>
+								<tr>
+									<th style='width:80%;'>? Question</th>
+									<th>Sequence</th>
+								</tr>
+							";
+
+			$resultRead = $quizModel->readQuestions();
+			while($quizInfo = $resultRead->fetch(PDO::FETCH_OBJ)){
+				$qCounter++;
+				$body.="
+							<tr>
+								<td>".$quizInfo->question."</td>
+								<td class='ArrAns'>
+								<p>1: ".$quizInfo->choice1."</p>
+								<p>2: ".$quizInfo->choice2."</p>
+								<p>3: ".$quizInfo->choice3."</p>
+								<p>4: ".$quizInfo->choice4."</p>
+								</td>
+							</tr>
+						";
+			}
+
+			if($qCounter<1){
+				$body .="
+					<tr>
+						<td>There were no questions here.</td>
+					</tr>
+				";
+			}
+
+			$body.="</table></div>"; //this closes the goddamn div
+
+		}
+
 
 		if($partInfo->type_id == 1){
 
@@ -104,14 +148,16 @@ function produceBody(){
 			$resultRead = $quizModel->readQuestions();
 			while($quizInfo = $resultRead->fetch(PDO::FETCH_OBJ)){
 				$qCounter++;
+				if($quizInfo->choice1 = $quizInfo->rightAnswer){$quizInfo->choice1 = $quizInfo->choice1 . "<b>&#10004</b>";}
 				$body.="
 							<tr>
 								<td>".$quizInfo->question."</td>
 								<td class='multiAns'>
-								<p>A. ".$quizInfo->choice1." &#10004;</p>
+								<p>A. ".$quizInfo->choice1."</p>
 								<p>B. ".$quizInfo->choice2."</p>
 								<p>C. ".$quizInfo->choice3."</p>
 								<p>D. ".$quizInfo->choice4."</p>
+								<p>D. ".$quizInfo->rightAnswer."</p>
 								</td>
 							</tr>
 						";
