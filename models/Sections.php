@@ -223,4 +223,34 @@
             return $stmt;    
         }
 
+        public function getHandledCourses($admin_id){
+            $query = "SELECT DISTINCT a.admin_id, sh.handling_id, sh.section_id, sec.course_id, c.course, sy.schoolyear FROM admins a INNER JOIN 
+           sections_handled sh on a.admin_id = sh.admin_id INNER JOIN sections sec on sh.section_id = sec.section_id INNER JOIN 
+           courses c on sec.course_id = c.course_id 
+           INNER JOIN school_years sy on sh.schoolyear_id = sy.schoolyear_id WHERE a.admin_id = ? and 
+           sh.schoolyear_id IN (select schoolyear_id FROM school_years where status = 1)";
+           $stmt = $this->conn->prepare($query);
+           $stmt->bindParam(1, $admin_id);
+           $stmt->execute();
+           return $stmt;   
+         }
+ 
+         public function getHandledSections($admin_id , $course_id){
+             $query = "SELECT a.admin_id, sh.section_id, sec.section, (SELECT count(student_id) FROM students_sections 
+             where section_id = sh.section_id and sh.schoolyear_id IN (SELECT schoolyear_id from school_years where status = 1)) as 'students', sy.schoolyear , sy.schoolyear_id
+             from admins a inner join sections_handled sh on a.admin_id = sh.admin_id
+             inner join sections sec on sh.section_id = sec.section_id 
+             inner join school_years sy on sh.schoolyear_id = sy.schoolyear_id
+             where a.admin_id = :admin_id and sec.course_id = :sec_id and sh.schoolyear_id 
+             IN (SELECT schoolyear_id from school_years where status = 1)";
+             
+             $stmt = $this->conn->prepare($query);
+             $stmt->bindParam(':admin_id', $admin_id);
+             $stmt->bindParam(':sec_id', $course_id);
+             $stmt->execute();
+             return $stmt;   
+         }
+
     }
+
+

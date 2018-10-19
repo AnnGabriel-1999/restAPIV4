@@ -7,7 +7,7 @@
     //Instantiate Database Class
     $database = new Database();
     $db = $database->connect();
-    //Instantiate Quiz Class
+    //Instantiate Quiz Clssss
     $quiz = new Quiz($db);
 
     $result = $quiz->filterQuizByTag($_GET['admin_id'], $_GET['tag_id']);
