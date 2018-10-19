@@ -26,7 +26,7 @@
         while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             extract($row);
             $quiz_item = array (
-                'fullname' => $fullname,
+                'username' => $username,
                 'id' => $admin_id
             );
 

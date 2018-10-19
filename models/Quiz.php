@@ -65,6 +65,7 @@
                    a.question_id,
                    b.quiz_id,
                    a.part_id,
+                   d.type_id,
                    (
                        SELECT value from answer_choices
                        WHERE a.answer = choice_id
@@ -101,11 +102,14 @@
                    FROM
                    questions a,
                    quizzes b,
-                   admins c
+                   admins c,
+                   quiz_parts d
                    WHERE
                    c.admin_id = b.admin_id
                    AND
                    b.quiz_id = a.quiz_id
+                   AND
+                 d.part_id = a.part_id
                   AND
                   a.part_id = $this->partID";
 
@@ -252,21 +256,34 @@
     }
 
          //Get Single Quiz
-         public function singleQuiz() {
-            //Create query
-            $query = "SELECT * FROM `quizzes` WHERE `quiz_id` =  ?";
+        public function singleQuiz() {
+           //Create query
+           $query = "SELECT
+                     a.quiz_id,
+                     a.quiz_title,
+                     a.admin_id,
+                     a.description,
+                     a.filepath,
+                     a.date_created,
+                     a.part_type,
+                     ( SELECT Max(quiz_id) FROM quizzes) as MaxID,
+                     ( SELECT count(part_id) FROM quiz_parts
+                     WHERE quiz_id = a.quiz_id) as partsTotal
+                     FROM quizzes a
+                     WHERE
+                     `quiz_id` =  ? ";
 
-            //Prepate Statement
-            $stmt = $this->conn->prepare($query);
+           //Prepate Statement
+           $stmt = $this->conn->prepare($query);
 
-            //Bind Student_ID
-            $stmt->bindParam(1, $this->quizID);
+           //Bind Student_ID
+           $stmt->bindParam(1, $this->quizID);
 
-            //Execute Query
-            $stmt->execute();
+           //Execute Query
+           $stmt->execute();
 
-            return $stmt;
-        }
+           return $stmt;
+       }
         
          public function getLastQuizId(){
             $query = "SELECT MAX(`quiz_id`) FROM quizzes";
@@ -846,5 +863,20 @@
         }else{
             return false;
         }
+    }
+    public function listofProf() {
+        //Create query
+        $query = "SELECT
+        admin_id,
+        username
+        FROM admins;";
+
+        //Prepare Statement
+        $stmt = $this->conn->prepare($query);
+
+        //Execute Query
+        $stmt->execute();
+
+        return $stmt;
     }
 }
