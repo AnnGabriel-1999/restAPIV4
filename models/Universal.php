@@ -134,7 +134,7 @@
     }
 
     /*custom*/
-    public function getAllSY(){
+    public function getAllSY(){ 
         $query = "select s.schoolyear_id, s.schoolYear, s.semester, (select COUNT(DISTINCT section_id)
                   FROM sections_handled WHERE schoolyear_id = s.schoolyear_id) 
                   AS total FROM school_years s order by s.status desc";

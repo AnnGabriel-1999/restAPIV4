@@ -793,9 +793,9 @@
     }
 
     public function filterQuizByTag($admin_id, $tag_id){		
-        $query = "SELECT q.quiz_id, qtc.tag_id, tag.tag_name, q.quiz_title, q.description, q.filepath FROM quizzes q  		
-        INNER JOIN quiz_tag_colllections qtc ON q.quiz_id = qtc.quiz_id		
-        INNER JOIN quiz_tags tag ON qtc.tag_id = tag.tag_id WHERE q.admin_id = $admin_id AND tag.tag_id = $tag_id";		
+        $query = "SELECT q.quiz_id, qtc.tag_id, tag.tag_name, q.quiz_title, q.description, q.filepath, q.date_created, q.part_type FROM quizzes 
+                  q INNER JOIN quiz_tag_colllections qtc ON q.quiz_id = qtc.quiz_id INNER JOIN quiz_tags tag ON qtc.tag_id = tag.tag_id
+                  WHERE q.admin_id = $admin_id AND tag.tag_id = $tag_id";	
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':quizId', $this->quizID);	
         $stmt->execute();	

@@ -22,6 +22,20 @@
 
     if($errorCont->checkField($data->section_name, 'Section Name', 1, 150)){
         if($errorCont->checkField($data->year_level, 'Year Level', 1, 2)){
+
+            $res = $univ->selectAll('sections', 'course_id', $data->courseID, 'section', $data->section_name);
+
+            if($res->rowCount() == 0) {
+
+            }else{
+                echo json_encode(
+                    array(
+                        'message' => 'Existing na po'
+                    )
+                );  
+            }
+
+
             if($univ->update2('sections', 'section', $data->section_name, 'year_level', $data->year_level, 'section_id', $data->section_id)){
                 echo json_encode(array('message' => 'nice one'));
             }else{

@@ -22,7 +22,9 @@
                 'TagName' => $tag_name,
                 'QuizTitle' => $quiz_title,
                 'Description' => $description, 
-                'Filepath' => $filepath
+                'Filepath' => $filepath,
+                'DateCreated' => $date_created,
+                'PartType' => $part_type
             );
             array_push($tagged_quizzes['data'], $tagged_quiz_item);
         }

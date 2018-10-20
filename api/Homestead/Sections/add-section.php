@@ -19,23 +19,26 @@
     //Get Raw Data
     $data = json_decode(file_get_contents('php://input'));
 
-    if($errorCont->checkField($data->course_name, 'Course Name', 1, 150)){
+    if($errorCont->checkField($data->courseID, 'Course ID', 1, 150)){
         if($errorCont->checkField($data->section_name, 'Section Name', 1, 150)){
             if($errorCont->checkField($data->year_level, 'Year Level', 1, 2)){
-                $res = $univ->selectAll2('courses', 'course', $data->course_name);
-
-                if ($res->rowCount() == 1 ) {
-                    while($row = $res->fetch(PDO::FETCH_ASSOC)){
-                        extract($row);
-                        $Course_id = $course_id;
+                
+                $res = $univ->selectAll('sections', 'course_id', $data->courseID, 'section', $data->section_name);
+                    
+                if($res->rowCount() == 0) {
+                    if($univ->insert3('sections', 'course_id', 'section', 'year_level' ,$data->courseID, $data->section_name, $data->year_level)){
+                        echo json_encode(array ('success' => 'Section added.'));
+                    }else{
+                        echo json_encode(array ('error' => 'Section error.'));
                     }
-                }
-
-                if($univ->insert3('sections', 'course_id', 'section', 'year_level' ,$Course_id, $data->section_name, $data->year_level)){
-                    echo json_encode(array ('success' => 'Section added.'));
                 }else{
-                    echo json_encode(array ('error' => 'Section error.'));
+                    echo json_encode(
+                        array(
+                            'message' => 'Existing na po'
+                        )
+                    );  
                 }
+              
             }
         }
     }
