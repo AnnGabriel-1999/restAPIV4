@@ -11,7 +11,7 @@
     include_once '../../controllers/ErrorController.php';
 
     //Instantiate Database Class
-    $database = new Database();
+     $database = new Database();
     $db = $database->connect();
     $quizzes = new Quiz($db);
     $errorCont = new ErrorController();
@@ -19,49 +19,13 @@
     //Get Raw Data
     $data = json_decode(file_get_contents('php://input'));
 
-    if($errorCont->checkField($data->type_name, 'Type Name', 10, 21)){
-        if($errorCont->checkField($data->quizID, 'Quiz ID', 0, 1001)){
-                if($errorCont->checkField($data->duration, 'Duration', 0, 4)){
-                    if($errorCont->numbersOnly($data->duration, 'Duration')){
-                        $quizzes->type_name = $data->type_name;
-                        $quizzes->quizID = $data->quizID;
-                        $quizzes->duration = $data->duration;
-                        $quizzes->getTypeID();
-
-                        //Create
-                        $quizzes->countParts();
-                        $quizzes->totalParts += 1;
-                        if ($quizzes->setType()){
-
-                            echo json_encode(
-                                array('success' => 'Quiz part added.',
-                                        'num parts' => $quizzes->countParts() 
-                                        )
-                            );
-                        }else{
-                            echo json_encode(
-                                array('message' => 'There is an error.')
-                            ); 
-                        }
-                    }   else{
-                  echo json_encode(
-                      array("error" => "Part Title already exists")
-                  );
-              }
-            }
-        }
-    }  
-      
+    $quizzes->type_name = $data->type_name;
+    $quizzes->duration = $data->duration;
     
-
-    if($errorCont->errors != null){
-        echo json_encode(
-            $errorCont->errors
-        );
+    if ($quizzes->setType()){
+        echo json_encode(array('success' => 'Quiz part added.','num parts' => $quizzes->countParts()));
+    }else{
+        echo json_encode(array('message' => 'There is an error.')); 
     }
-    
-    
-
-    
 
 ?>

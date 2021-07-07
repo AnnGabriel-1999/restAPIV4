@@ -11,20 +11,23 @@
     $db = $database->connect();
 
     //Instantiate Quiz Class
-    $quiz = new Quiz($db); 
+    $quiz = new Quiz($db);
 
     //Get ID from URL
     $quiz->quizID = isset($_GET['quizID']) ? $_GET['quizID'] : die();
-    
+
     //Get Post
     $result = $quiz->singleQuiz();
 
     $row = $result->fetch(PDO::FETCH_ASSOC);
 
     $quiz_item = array (
+                'quiz_id' =>$row['quiz_id'],
                 'quiz_title' =>$row['quiz_title'],
                 'description' => $row['description'],
-                'date_created' => $row['date_created'] 
+                'date_created' => $row['date_created'],
+                'MaxID' => $row['MaxID'],
+                'partsTotal' => $row['partsTotal']
             );
-    
+
     echo json_encode($quiz_item);

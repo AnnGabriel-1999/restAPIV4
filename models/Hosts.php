@@ -38,36 +38,34 @@
         }
 
         public function registerHost(){
-            $insertQuery = "INSERT INTO admins
-                            SET
-                              mirror_id = :mirror_id,
-                              username = :username,
-                              password = :password
-                              ";
+          $insertQuery = "INSERT INTO admins
+                          SET
+                            mirror_id = :mirror_id,
+                            username = :username,
+                            password = :password
+                            ";
 
-            //Prepare Insert Statement
-            $stmt = $this->conn->prepare($insertQuery);
+          //Prepare Insert Statement
+          $stmt = $this->conn->prepare($insertQuery);
 
-            //Clean inputted data
-            $this->fnammirror_ide = htmlspecialchars(strip_tags($this->mirror_id));
-            $this->username = htmlspecialchars(strip_tags($this->username));
-            $this->password = htmlspecialchars(strip_tags($this->password));
+          //Clean inputted data
+          $this->fnammirror_ide = htmlspecialchars(strip_tags($this->mirror_id));
+          $this->username = htmlspecialchars(strip_tags($this->username));
+          $this->password = htmlspecialchars(strip_tags($this->password));
 
-            //Bind paramaters
-            $stmt->bindParam(':mirror_id', $this->mirror_id);
-            $stmt->bindParam(':username', $this->username);
-            $stmt->bindParam(':password', $this->password);
-
-
-            //Execute
-            if($stmt->execute()){
-                return true;
-            }else{
-                return false;
-            }
+          //Bind paramaters
+          $stmt->bindParam(':mirror_id', $this->mirror_id);
+          $stmt->bindParam(':username', $this->username);
+          $stmt->bindParam(':password', $this->password);
 
 
-    }
+          //Execute
+          if($stmt->execute()){
+              return true;
+          }else{
+              return false;
+          }
+        }
 
     function logInHost(){
         //QUERY
@@ -175,4 +173,5 @@
         $stmt->execute();
         return $stmt;
     }
-}
+
+  } 

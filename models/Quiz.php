@@ -19,6 +19,7 @@
         public $filepath;
         public $totalQuiz;
         public $MaxID;
+        public $lastQId;
         
         //Quiz Part Properties
         public $type_id;
@@ -64,6 +65,7 @@
                    a.question_id,
                    b.quiz_id,
                    a.part_id,
+                   d.type_id,
                    (
                        SELECT value from answer_choices
                        WHERE a.answer = choice_id
@@ -100,11 +102,14 @@
                    FROM
                    questions a,
                    quizzes b,
-                   admins c
+                   admins c,
+                   quiz_parts d
                    WHERE
                    c.admin_id = b.admin_id
                    AND
-                  b.quiz_id = a.quiz_id
+                   b.quiz_id = a.quiz_id
+                   AND
+                 d.part_id = a.part_id
                   AND
                   a.part_id = $this->partID";
 
@@ -212,7 +217,7 @@
         }
         
         //Read Quiz
-        public function readQUiz() {
+    public function readQUiz() {
             //Create query
             $query = "SELECT
             a.quiz_id,
@@ -242,23 +247,52 @@
             return $stmt;
         }
 
+    public function readFreeFlow(){
+      $query = "SELECT * FROM `quiz_parts` WHERE `quiz_id` = ?";
+      $stmt = $this->conn->prepare($query);
+      $stmt->bindParam(1, $this->quizID);
+      $stmt->execute();
+      return $stmt;
+    }
+
          //Get Single Quiz
-         public function singleQuiz() {
-            //Create query
-            $query = "SELECT * FROM `quizzes` WHERE `quiz_id` =  ?";
+        public function singleQuiz() {
+           //Create query
+           $query = "SELECT
+                     a.quiz_id,
+                     a.quiz_title,
+                     a.admin_id,
+                     a.description,
+                     a.filepath,
+                     a.date_created,
+                     a.part_type,
+                     ( SELECT Max(quiz_id) FROM quizzes) as MaxID,
+                     ( SELECT count(part_id) FROM quiz_parts
+                     WHERE quiz_id = a.quiz_id) as partsTotal
+                     FROM quizzes a
+                     WHERE
+                     `quiz_id` =  ? ";
 
-            //Prepate Statement
-            $stmt = $this->conn->prepare($query);
+           //Prepate Statement
+           $stmt = $this->conn->prepare($query);
 
-            //Bind Student_ID
-            $stmt->bindParam(1, $this->quizID);
+           //Bind Student_ID
+           $stmt->bindParam(1, $this->quizID);
 
-            //Execute Query
-            $stmt->execute();
+           //Execute Query
+           $stmt->execute();
 
-            return $stmt;
-        }
+           return $stmt;
+       }
         
+         public function getLastQuizId(){
+            $query = "SELECT MAX(`quiz_id`) FROM quizzes";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $this->lastQId = $row['MAX(`quiz_id`)'];
+         }
+
          public function setType() {
             $insertQuery = "INSERT INTO quiz_parts SET
                                 type_id = :type_id,
@@ -267,15 +301,18 @@
                                 position = :position";
 
             $stmt = $this->conn->prepare($insertQuery);
-
-            // Bind parameters
+            
+            $this->getLastQuizId();
+            $this->getTypeID();
+          
             $stmt->bindParam(':type_id', $this->type_id);
-            $stmt->bindParam(':quiz_id', $this->quizID);
+            $stmt->bindParam(':quiz_id', $this->lastQId);
+            $this->totalParts = 1;
             $stmt->bindParam(':position', $this->totalParts);
             $stmt->bindParam(':duration', $this->duration);
             
             // Execute
-            if ($stmt->execute()) {
+            if ($stmt->execute()){
                 return true;
             } else {
                 return false;
@@ -793,9 +830,9 @@
     }
 
     public function filterQuizByTag($admin_id, $tag_id){		
-        $query = "SELECT q.quiz_id, qtc.tag_id, tag.tag_name, q.quiz_title, q.description, q.filepath FROM quizzes q  		
-        INNER JOIN quiz_tag_colllections qtc ON q.quiz_id = qtc.quiz_id		
-        INNER JOIN quiz_tags tag ON qtc.tag_id = tag.tag_id WHERE q.admin_id = $admin_id AND tag.tag_id = $tag_id";		
+        $query = "SELECT q.quiz_id, qtc.tag_id, tag.tag_name, q.quiz_title, q.description, q.filepath, q.date_created, q.part_type FROM quizzes 
+                  q INNER JOIN quiz_tag_colllections qtc ON q.quiz_id = qtc.quiz_id INNER JOIN quiz_tags tag ON qtc.tag_id = tag.tag_id
+                  WHERE q.admin_id = $admin_id AND tag.tag_id = $tag_id";	
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':quizId', $this->quizID);	
         $stmt->execute();	
@@ -826,5 +863,20 @@
         }else{
             return false;
         }
+    }
+    public function listofProf() {
+        //Create query
+        $query = "SELECT
+        admin_id,
+        username
+        FROM admins;";
+
+        //Prepare Statement
+        $stmt = $this->conn->prepare($query);
+
+        //Execute Query
+        $stmt->execute();
+
+        return $stmt;
     }
 }

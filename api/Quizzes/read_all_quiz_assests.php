@@ -27,6 +27,9 @@ while($datarow = $result->fetch(PDO::FETCH_ASSOC)){
         'part_type' => $datarow['part_type']
     );
     array_push($myArray['quiz'], $quiz_item);
+
+	//dito ka mag query na pag insert nung quiz
+	//$quizModel->shareQuiz(quizId,QuizName,yungPic,asdasdsad);
 }
 
 $myArray['parts'] = array();
@@ -41,6 +44,10 @@ while($datarow2 = $result2->fetch(PDO::FETCH_ASSOC)){
         'type_id' => $datarow2['type_id'],
         'description' => $datarow2['description']
     );
+
+    //papasok mo yung part
+    //quizModel->sharePart(adasdasdasdasdasdas.d.as.das.d.asd.asd.);
+
     $qqquestions = array();
         $quizModel->partID = $datarow2['part_id'];
         $result3 = $quizModel->readQuestions();
@@ -56,6 +63,8 @@ while($datarow2 = $result2->fetch(PDO::FETCH_ASSOC)){
             'choice3' => $datarow3['choice3'],
             'choice4' => $datarow3['choice4'],
         ));
+
+            //quizModel->shareQuestions();
         }
     
     array_push($parts_item,$qqquestions);
